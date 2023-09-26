@@ -1,0 +1,51 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "notion-haystack"
+dynamic = ["version"]
+description = ''
+readme = "README.md"
+requires-python = ">=3.8"
+license = "Apache-2.0"
+keywords = ["notion", "haystack", "markdown"]
+authors = [
+  { name = "Bogdan Kostić", email = "bogdankostic@web.de" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "farm-haystack",
+  "python-frontmatter"
+]
+
+[project.urls]
+"GitHub" = "https://github.com/bogdankostic/notion-haystack"
+
+[tool.hatch.version]
+path = "notion_haystack/__about__.py"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/notion_haystack",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = [
+  "notion_haystack",
+]
+
+[tool.black]
+line-length = 120

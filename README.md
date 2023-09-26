@@ -1,2 +1,56 @@
-# notion-haystack
-📓 A Haystack component to extract Notion pages to Documents.
+# notion-haystack: Export Notion pages to Haystack Document
+
+This python package allows you to easily export your Notion pages to Haystack Documents by providing a Notion API token.
+
+Given that the Notion API is subject to some [rate limits](https://developers.notion.com/reference/request-limits),
+this component will automatically retry failed requests and wait for the rate limit to reset before retrying. This is
+especially useful when exporting a large number of pages. Furthermore, this component uses `asyncio` to make requests in
+parallel, which can significantly speed up the export process.
+
+## Installation
+
+```bash
+pip install notion-haystack
+```
+
+## Usage
+
+The following minimal example demonstrates how to export a list of pages to Haystack Documents:
+```python
+from notion_haystack import NotionExporter
+
+exporter = NotionExporter(api_token="<your-token>")
+exported_pages = exporter.run(file_paths=["<list-of-page-ids>"])
+
+# exported_pages will be a list of Haystack Documents where each Document corresponds to a Notion page
+```
+
+The following example shows how to use the `NotionExporter` inside an indexing pipeline:
+```python
+from notion_haystack import NotionExporter
+from haystack.document_stores import InMemoryDocumentStore
+from haystack import Pipeline
+
+document_store = InMemoryDocumentStore()
+exporter = NotionExporter(api_token="<your-token>")
+
+indexing_pipeline = Pipeline()
+indexing_pipeline.add_node(component=exporter, name="exporter", inputs=["File"])
+indexing_pipeline.add_node(component=document_store, name="document_store", inputs=["exporter"])
+indexing_pipeline.run(file_paths=["<list-of-page-ids>"])
+
+# The pages will now be indexed in the document store
+```
+
+The `NotionExporter` class takes the following arguments:
+- `notion_token`: Your Notion API token. You can find information on how to get an API token in [Notion's documentation](https://developers.notion.com/docs/create-a-notion-integration)
+- `export_child_pages`: Whether to recursively export all child pages of the provided page ids. Defaults to `False`.
+- `extract_page_metadata`: Whether to extract metadata from the page and add it as a frontmatter to the markdown. 
+                           Extracted metadata includes title, author, path, URL, last editor, and last editing time of 
+                           the page. Defaults to `False`.
+- `exclude_title_containing`: If specified, pages with titles containing this string will be excluded. This might be
+                              useful for example to exclude pages that are archived. Defaults to `None`.
+
+The `NotionExporter.run` method takes the following arguments:
+- `file_paths`: A list of page ids to export. If `export_child_pages` is `True`, all child pages of these pages will be
+                exported as well.
