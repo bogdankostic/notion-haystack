@@ -2,9 +2,10 @@ from typing import List, Tuple, Dict
 
 from notion_exporter import NotionExporter as _NotionExporter
 import frontmatter
-
 from haystack.nodes import BaseComponent
 from haystack.schema import Document
+
+from ._custom_yaml_handler import CustomYAMLHandler
 
 
 class NotionExporter(BaseComponent):
@@ -45,9 +46,10 @@ class NotionExporter(BaseComponent):
         """
         extracted_pages = self.notion_exporter.export_pages(file_paths)
 
+        custom_yaml_handler = CustomYAMLHandler()
         documents = []
         for page_id, page in extracted_pages.items():
-            metadata, markdown_text = frontmatter.parse(page)
+            metadata, markdown_text = frontmatter.parse(page, handler=custom_yaml_handler)
             document = Document(meta=metadata, content=markdown_text)
             documents.append(document)
 

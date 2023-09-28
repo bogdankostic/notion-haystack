@@ -26,7 +26,8 @@ classifiers = [
 dependencies = [
   "notion-exporter",
   "farm-haystack",
-  "python-frontmatter"
+  "python-frontmatter",
+  "pyyaml"
 ]
 
 [project.urls]
