@@ -43,7 +43,7 @@ indexing_pipeline.run(file_paths=["<list-of-page-ids>"])
 ```
 
 The `NotionExporter` class takes the following arguments:
-- `notion_token`: Your Notion API token. You can find information on how to get an API token in [Notion's documentation](https://developers.notion.com/docs/create-a-notion-integration)
+- `api_token`: Your Notion API token. You can find information on how to get an API token in [Notion's documentation](https://developers.notion.com/docs/create-a-notion-integration)
 - `export_child_pages`: Whether to recursively export all child pages of the provided page ids. Defaults to `False`.
 - `extract_page_metadata`: Whether to extract metadata from the page and add it as a frontmatter to the markdown. 
                            Extracted metadata includes title, author, path, URL, last editor, and last editing time of 
