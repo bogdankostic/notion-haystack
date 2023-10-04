@@ -1,4 +1,4 @@
-# notion-haystack: Export Notion pages to Haystack Document
+# notion-haystack: Export Notion pages to Haystack Documents
 
 This python package allows you to easily export your Notion pages to Haystack Documents by providing a Notion API token.
 
