@@ -15,33 +15,42 @@ pip install notion-haystack
 
 ## Usage
 
-To use this package, you will need a Notion API token. You can follow the steps outlined in the [Notion documentation](https://developers.notion.com/docs/create-a-notion-integration#create-your-integration-in-notion) 
-to create a new Notion integration, connect it to your pages, and obtain your API token.
+To use this package, you will need a Notion API token. You can follow the steps outlined in the [Notion documentation](https://developers.notion.com/docs/create-a-notion-integration#create-your-integration-in-notion) to create a new Notion integration, connect it to your pages, and obtain your API token.
+> To enable your Notion integration to work on specific pages and the child pages in Notion, make sure to enable it in the 'Connections' setting of the page.
 
 The following minimal example demonstrates how to export a list of pages to Haystack Documents:
 ```python
 from notion_haystack import NotionExporter
 
 exporter = NotionExporter(api_token="<your-token>")
-exported_pages = exporter.run(file_paths=["<list-of-page-ids>"])
+exported_pages = exporter.run(page_ids=["<list-of-page-ids>"])
 
 # exported_pages will be a list of Haystack Documents where each Document corresponds to a Notion page
 ```
 
 The following example shows how to use the `NotionExporter` inside an indexing pipeline:
 ```python
-from notion_haystack import NotionExporter
-from haystack.document_stores import InMemoryDocumentStore
 from haystack import Pipeline
 
+from notion_haystack import NotionExporter
+from haystack.components.preprocessors import DocumentSplitter
+from haystack.components.writers import DocumentWriter
+from haystack.document_stores import InMemoryDocumentStore
+
 document_store = InMemoryDocumentStore()
-exporter = NotionExporter(api_token="<your-token>")
+exporter = NotionExporter(api_token='YOUR_NOTION_API_KEY')
+splitter = DocumentSplitter()
+writer = DocumentWriter(document_store=document_store)
 
 indexing_pipeline = Pipeline()
-indexing_pipeline.add_node(component=exporter, name="exporter", inputs=["File"])
-indexing_pipeline.add_node(component=document_store, name="document_store", inputs=["exporter"])
-indexing_pipeline.run(file_paths=["<list-of-page-ids>"])
+indexing_pipeline.add_component(instance=exporter, name="exporter")
+indexing_pipeline.add_component(instance=splitter, name="splitter")
+indexing_pipeline.add_component(instance=writer, name="writer")
 
+indexing_pipeline.connect("exporter.documents", "splitter.documents")
+indexing_pipeline.connect("splitter", "writer")
+
+indexing_pipeline.run(data={"exporter": {"page_ids": ["your_page_id"] }})
 # The pages will now be indexed in the document store
 ```
 
