@@ -42,7 +42,7 @@ class NotionExporter():
         """
         Export Notion pages to Haystack Documents by providing a list of Notion page IDs.
 
-        :param file_paths: A list of Notion page IDs to export.
+        :param page_ids: A list of Notion page IDs to export.
         """
         extracted_pages = self.notion_exporter.export_pages(page_ids)
 
