@@ -2,14 +2,13 @@ from typing import List, Tuple, Dict
 
 from notion_exporter import NotionExporter as _NotionExporter
 import frontmatter
-from haystack.nodes import BaseComponent
-from haystack.schema import Document
+from haystack import component  
+from haystack.dataclasses import Document
 
 from ._custom_yaml_handler import CustomYAMLHandler
 
-
-class NotionExporter(BaseComponent):
-    outgoing_edges = 1
+@component
+class NotionExporter():
 
     def __init__(
         self,
@@ -38,13 +37,14 @@ class NotionExporter(BaseComponent):
             exclude_title_containing=exclude_title_containing,
         )
 
-    def run(self, file_paths: List[str])-> Tuple[Dict, str]:
+    @component.output_types(documents=List[Document])
+    def run(self, page_ids: List[str])-> Tuple[Dict, str]:
         """
         Export Notion pages to Haystack Documents by providing a list of Notion page IDs.
 
         :param file_paths: A list of Notion page IDs to export.
         """
-        extracted_pages = self.notion_exporter.export_pages(file_paths)
+        extracted_pages = self.notion_exporter.export_pages(page_ids)
 
         custom_yaml_handler = CustomYAMLHandler()
         documents = []
@@ -53,15 +53,7 @@ class NotionExporter(BaseComponent):
             document = Document(meta=metadata, content=markdown_text)
             documents.append(document)
 
-        return {"documents": documents}, "output_1"
-
-    def run_batch(self, file_paths: List[str])-> Tuple[Dict, str]:
-        """
-        Export Notion pages to Haystack Documents by providing a list of Notion page IDs.
-
-        :param file_paths: A list of Notion page IDs to export.
-        """
-        return self.run(file_paths)
+        return {"documents": documents}
 
 
 
