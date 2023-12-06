@@ -64,5 +64,5 @@ The `NotionExporter` class takes the following arguments:
                               useful for example to exclude pages that are archived. Defaults to `None`.
 
 The `NotionExporter.run` method takes the following arguments:
-- `file_paths`: A list of page ids to export. If `export_child_pages` is `True`, all child pages of these pages will be
+- `page_ids`: A list of page ids to export. If `export_child_pages` is `True`, all child pages of these pages will be
                 exported as well.
