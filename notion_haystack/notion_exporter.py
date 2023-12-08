@@ -38,7 +38,7 @@ class NotionExporter():
         )
 
     @component.output_types(documents=List[Document])
-    def run(self, page_ids: List[str])-> Tuple[Dict, str]:
+    def run(self, page_ids: List[str]):
         """
         Export Notion pages to Haystack Documents by providing a list of Notion page IDs.
 
